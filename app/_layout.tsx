@@ -5,9 +5,11 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import { NotificationsProvider } from '@/contexts/NotificationsContext';
 import { useEffect } from 'react';
 import { I18nManager } from 'react-native';
-import { requestNotificationPermissions } from '@/services/pushNotifications';
+import { requestNotificationPermissions } from '@/services/pushNotifications'
+import { useFrameworkReady } from '@/hooks/useFrameworkReady';
 
 export default function RootLayout() {
+  useFrameworkReady();
   useEffect(() => {
     I18nManager.allowRTL(true);
     I18nManager.forceRTL(true);
