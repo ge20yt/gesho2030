@@ -19,7 +19,7 @@ function HomeTabIcon({ focused }: { focused: boolean }) {
           <MaterialIcons name="home" size={26} color={Colors.bgDark} />
         </LinearGradient>
       ) : (
-        <MaterialIcons name="home-outlined" size={24} color="rgba(255,255,255,0.45)" />
+        <MaterialIcons name="home" size={24} color="rgba(255,255,255,0.45)" />
       )}
     </View>
   );

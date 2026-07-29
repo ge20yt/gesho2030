@@ -96,25 +96,19 @@ export default function WalletScreen() {
 
   useEffect(() => { loadWallet(); }, [loadWallet]);
 
-  // ── Cash top-up (direct DB write, no payment gateway) ─────────
+  // ── Cash top-up (atomic via RPC) ─────────────────────────────
   const handleCashCharge = async (amt: number) => {
-    if (!user?.id || !wallet?.id) return;
+    if (!user?.id) return;
     const supabase = getSupabaseClient();
 
-    await supabase.from('wallet_transactions').insert({
-      user_id: user.id,
-      type: 'credit',
-      amount: amt,
-      description: 'شحن المحفظة — نقداً',
+    const { error } = await supabase.rpc('process_wallet_transaction', {
+      p_user_id: user.id,
+      p_type: 'credit',
+      p_amount: amt,
+      p_description: 'شحن المحفظة — نقداً',
     });
 
-    const newBalance = (wallet.balance ?? 0) + amt;
-    const newTotalCharged = (wallet.total_charged ?? 0) + amt;
-    await supabase.from('wallets').update({
-      balance: newBalance,
-      total_charged: newTotalCharged,
-      updated_at: new Date().toISOString(),
-    }).eq('user_id', user.id);
+    if (error) throw new Error(error.message);
   };
 
   // ── Stripe card top-up via Edge Function ───────────────────────

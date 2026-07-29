@@ -355,7 +355,6 @@ export class CommissionService {
         const { error } = await this.supabase
           .from('commission_rules')
           .upsert({
-            id: rule.id,
             ...rule,
             updated_at: new Date(),
           });

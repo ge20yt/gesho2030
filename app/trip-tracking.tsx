@@ -359,7 +359,7 @@ export default function TripTrackingScreen() {
 
         if (newStatus === 'arrived' && !notifiedRef.current.has('arrived')) {
           notifiedRef.current.add('arrived');
-          scheduleDriverArrivedNotification();
+          scheduleDriverArrivedNotification(driverName);
           addNotification({
             type: 'driver_arrived',
             title: 'السائق وصل إليك!',
@@ -396,7 +396,7 @@ export default function TripTrackingScreen() {
         if (newStatus === 'cancelled' && !notifiedRef.current.has('cancelled')) {
           notifiedRef.current.add('cancelled');
           addNotification({
-            type: 'trip_cancelled',
+            type: 'general',
             title: 'تم إلغاء الرحلة',
             body: 'تم إلغاء رحلتك',
             time: 'الآن', icon: 'cancel', iconColor: Colors.error,

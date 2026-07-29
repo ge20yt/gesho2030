@@ -96,53 +96,23 @@ export class WalletService {
   }
 
   /**
-   * Record transaction
+   * Record transaction (atomic via RPC)
    */
   async addTransaction(userId: string, request: TransactionRequest): Promise<WalletTransaction> {
     try {
-      const wallet = await this.getWallet(userId);
-      if (!wallet) {
-        throw new Error('Wallet not found');
-      }
-
-      // Calculate new balance
-      let newBalance = wallet.balance;
-      if (request.type === WalletTransactionType.CREDIT || request.type === WalletTransactionType.COMMISSION) {
-        newBalance += request.amount;
-      } else if (request.type === WalletTransactionType.DEBIT || request.type === WalletTransactionType.PENALTY) {
-        if (newBalance < request.amount) {
-          throw new Error('Insufficient balance');
-        }
-        newBalance -= request.amount;
-      }
-
-      // Create transaction record
       const { data, error } = await this.supabase
-        .from('wallet_transactions')
-        .insert({
-          wallet_id: wallet.id,
-          type: request.type,
-          amount: request.amount,
-          balance: newBalance,
-          description: request.description,
-          reference: request.reference,
-          metadata: request.metadata,
-          created_at: new Date(),
-        })
-        .select()
-        .single();
+        .rpc('process_wallet_transaction', {
+          p_user_id: userId,
+          p_type: request.type,
+          p_amount: request.amount,
+          p_description: request.description,
+          p_reference: request.reference ?? null,
+          p_metadata: request.metadata ?? null,
+        });
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
-      // Update wallet balance
-      await this.updateWalletBalance(wallet.id, newBalance);
-
-      // Clear cache
       this.walletCache.delete(userId);
-
-      // Notify listeners
       this.notifyTransactionListeners(userId, data);
 
       return data;

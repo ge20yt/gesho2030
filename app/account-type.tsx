@@ -25,7 +25,7 @@ interface AccountType {
   subtitle: string;
   description: string;
   color: string;
-  gradient: string[];
+  gradient: [string, string];
   route: string;
 }
 

@@ -3,7 +3,6 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Stack } from 'expo-router';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { NotificationsProvider } from '@/contexts/NotificationsContext';
-import { PlatformProvider } from '@/contexts/PlatformContext';
 import { useEffect } from 'react';
 import { I18nManager } from 'react-native';
 import { requestNotificationPermissions } from '@/services/pushNotifications';
@@ -12,16 +11,14 @@ export default function RootLayout() {
   useEffect(() => {
     I18nManager.allowRTL(true);
     I18nManager.forceRTL(true);
-    // Request push notification permissions on first launch
     requestNotificationPermissions();
   }, []);
 
   return (
     <AlertProvider>
       <SafeAreaProvider>
-        <PlatformProvider config={{ darkMode: true, language: 'ar' }}>
-          <AuthProvider>
-            <NotificationsProvider>
+        <AuthProvider>
+          <NotificationsProvider>
               <Stack screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="onboarding" />
                 <Stack.Screen name="index" />
@@ -35,8 +32,6 @@ export default function RootLayout() {
                 <Stack.Screen name="trip-details" />
                 <Stack.Screen name="complaints" />
                 <Stack.Screen name="admin" />
-                <Stack.Screen name="admin-dashboard" />
-                <Stack.Screen name="admin-users" />
                 <Stack.Screen name="notifications" />
                 <Stack.Screen name="driver-search" />
                 <Stack.Screen name="coupons" options={{ presentation: 'modal' }} />
@@ -49,7 +44,6 @@ export default function RootLayout() {
               </Stack>
             </NotificationsProvider>
           </AuthProvider>
-        </PlatformProvider>
       </SafeAreaProvider>
     </AlertProvider>
   );

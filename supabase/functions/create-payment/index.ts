@@ -1,15 +1,15 @@
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import Stripe from "https://esm.sh/stripe@18.5.0";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import Stripe from "npm:stripe@18.5.0";
+import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-serve(async (req) => {
+Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { status: 200, headers: corsHeaders });
   }
 
   const supabaseClient = createClient(
@@ -37,14 +37,12 @@ serve(async (req) => {
       apiVersion: "2024-06-20",
     });
 
-    // Check if customer exists
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     let customerId: string | undefined;
     if (customers.data.length > 0) {
       customerId = customers.data[0].id;
     }
 
-    // Create one-time payment session with dynamic price
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
@@ -56,7 +54,7 @@ serve(async (req) => {
               name: description || "دفع رحلة تك توكي",
               description: tripId ? `Trip #${tripId}` : "Trip payment",
             },
-            unit_amount: Math.round(amount * 100), // Convert to piasters
+            unit_amount: Math.round(amount * 100),
           },
           quantity: 1,
         },
@@ -69,8 +67,6 @@ serve(async (req) => {
         trip_id: tripId ?? "",
       },
     });
-
-    console.log("Payment session created:", session.id, "for user:", user.id);
 
     return new Response(JSON.stringify({ url: session.url, sessionId: session.id }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

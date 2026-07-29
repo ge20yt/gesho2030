@@ -334,7 +334,7 @@ export default function DriverProfileScreen() {
             {appliedCoupon ? (
               <>
                 <MaterialIcons name="close" size={18} color={Colors.error}
-                  onTouchEnd={(e) => { e.stopPropagation(); setAppliedCoupon(null); }}
+                  onTouchEnd={(e: any) => { e.stopPropagation(); setAppliedCoupon(null); }}
                 />
                 <Text style={[styles.couponText, { color: Colors.success }]}>
                   {appliedCoupon.code} - وفرت {basePrice - finalPrice} ج.م

@@ -35,7 +35,7 @@ export const REDEEM_OPTIONS = [
   { id: 'free_ride',  label: 'رحلة مجانية', icon: 'directions-car', points: 800, value: 0,  color: '#F59E0B' },
 ];
 
-function getLevelFromTotal(total: number): RewardData['level'] {
+export function getLevelFromTotal(total: number): RewardData['level'] {
   if (total >= 3000) return 'platinum';
   if (total >= 1500) return 'gold';
   if (total >= 500)  return 'silver';

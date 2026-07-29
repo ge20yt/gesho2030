@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef, useCallback, AppState, AppStateStatus } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, TextInput,
   FlatList, KeyboardAvoidingView, Platform, ActivityIndicator,
-  AppState as RNAppState,
+  AppState as RNAppState, AppStateStatus,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
